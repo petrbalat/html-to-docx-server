@@ -12,6 +12,6 @@ Content-Type: application/json
 
 ## docker image
 
-docker build . -t petrbalat/html-to-docx-server
+docker build . --platform linux/amd64 -t petrbalat/html-to-docx-server
 
 docker run -p 8080:8080 -d petrbalat/html-to-docx-server
