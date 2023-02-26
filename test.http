@@ -1,0 +1,6 @@
+POST http://127.0.0.1:8080
+Content-Type: application/json
+
+{
+  "html": "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\" /><title>Document</title></head><body><div><p>Taken from wikipedia</p></div></body></html>"
+}
