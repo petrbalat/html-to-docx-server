@@ -43,7 +43,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 const port = +(process.env.PORT ?? '8080');
-const host = +(process.env.HOST ?? 'localhost');
+const host = process.env.HOST ?? 'localhost';
 server.listen(port, host, () => {
     console.log(`Server is running on http://${host}:${port}`);
 });
