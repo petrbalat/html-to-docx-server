@@ -22,6 +22,7 @@ const server = http.createServer(async (req, res) => {
             req.on("end", async function () {
                 const result = await HTMLtoDOCX(html, null, options);
 
+                res.setHeader("Access-Control-Allow-Origin", `*`);
                 res.setHeader("Content-Disposition", `attachment;filename=${fileName}`);
                 res.writeHead(200, {"Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
 
