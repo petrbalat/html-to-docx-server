@@ -28,6 +28,10 @@ const server = http.createServer(async (req, res) => {
                 res.write(result);
                 res.end();
             });
+        } else if(req.method === 'GET' && req.url === '/live') {
+            res.writeHead(200);
+            res.write('ok');
+            res.end();
         } else {
             res.writeHead(400);
             res.end();
