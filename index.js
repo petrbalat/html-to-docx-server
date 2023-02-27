@@ -5,21 +5,31 @@ import http from 'http';
  * http post požadavek s json objektem povinným html a volitelně options
  */
 const server = http.createServer(async (req, res) => {
-    try {
-        if (req.method === 'POST') {
-            let html;
-            let options;
-            let fileName;
-            req.on('data', async data => {
-                const body = JSON.parse(data);
-                if (!body.html) throw new Error('No html provided');
+    if (req.method === 'POST') {
+        let html;
+        let options;
+        let fileName;
 
-                html = body.html;
-                fileName = body.fileName;
-                options = body.options ?? {};
-            });
+        const tryAndEnd = (func) => {
+            try {
+                func();
+            } catch (e) {
+                res.writeHead(500);
+                res.end();
+            }
+        }
 
-            req.on("end", async function () {
+        req.on('data', data => tryAndEnd(() => {
+            const body = JSON.parse(data);
+            if (!body.html) throw new Error('No html provided');
+
+            html = body.html;
+            fileName = body.fileName;
+            options = body.options ?? {};
+        }));
+
+        req.on("end", () => tryAndEnd(async () => {
+            if (html) {
                 const result = await HTMLtoDOCX(html, null, options);
 
                 res.setHeader("Access-Control-Allow-Origin", `*`);
@@ -27,18 +37,18 @@ const server = http.createServer(async (req, res) => {
                 res.writeHead(200, {"Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
 
                 res.write(result);
-                res.end();
-            });
-        } else if(req.method === 'GET' && req.url === '/live') {
-            res.writeHead(200);
-            res.write('ok');
+            } else {
+                res.writeHead(500);
+            }
             res.end();
-        } else {
-            res.writeHead(400);
-            res.end();
-        }
-    } catch (e) {
-        res.writeHead(500);
+        }));
+
+    } else if (req.method === 'GET' && req.url === '/live') {
+        res.writeHead(200);
+        res.write('ok');
+        res.end();
+    } else {
+        res.writeHead(400);
         res.end();
     }
 });
